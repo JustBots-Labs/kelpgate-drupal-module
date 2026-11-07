@@ -1,0 +1,8 @@
+name: 'Kelpgate Malware Scanner'
+type: module
+description: 'Protects Drupal file and media uploads with multi-engine malware scanning via the Kelpgate REST API.'
+package: Security
+core_version_requirement: ^9.4 || ^10 || ^11
+configure: kelpgate.settings
+dependencies:
+  - drupal:file

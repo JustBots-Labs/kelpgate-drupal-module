@@ -1,0 +1,34 @@
+kelpgate.settings:
+  type: config_object
+  label: 'Kelpgate Malware Scanner settings'
+  mapping:
+    enabled:
+      type: boolean
+      label: 'Enable scanning'
+    api_url:
+      type: string
+      label: 'Scanner API URL'
+    token_url:
+      type: string
+      label: 'OAuth 2.0 Token URL'
+    auth_mode:
+      type: string
+      label: 'Authentication Mode'
+    client_id:
+      type: string
+      label: 'OAuth 2.0 Client ID'
+    client_secret:
+      type: string
+      label: 'OAuth 2.0 Client Secret'
+    api_token:
+      type: string
+      label: 'API Bearer Token'
+    fail_action:
+      type: string
+      label: 'Failure Action (block or allow)'
+    max_scan_mb:
+      type: integer
+      label: 'Maximum file size to scan in MB'
+    timeout_seconds:
+      type: integer
+      label: 'Scan timeout in seconds'

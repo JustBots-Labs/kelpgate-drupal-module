@@ -1,0 +1,13 @@
+services:
+  kelpgate.scanner:
+    class: Drupal\kelpgate\Scanner\KelpgateScanner
+    arguments:
+      - '@http_client'
+      - '@config.factory'
+      - '@logger.channel.kelpgate'
+      - '@cache.default'
+      - '@state'
+
+  logger.channel.kelpgate:
+    parent: logger.channel_base
+    arguments: ['kelpgate']

@@ -1,0 +1,35 @@
+<?php
+
+/**
+ * @file
+ * Primary module hooks for the Kelpgate Malware Scanner module.
+ */
+
+use Drupal\file\FileInterface;
+
+/**
+ * Implements hook_file_validate().
+ *
+ * Scans uploaded files through Kelpgate REST API before Drupal commits them.
+ */
+function kelpgate_file_validate(FileInterface $file) {
+  $errors = [];
+
+  /** @var \Drupal\kelpgate\Scanner\KelpgateScanner $scanner */
+  $scanner = \Drupal::service('kelpgate.scanner');
+
+  if (!$scanner->isEnabled()) {
+    return $errors;
+  }
+
+  $result = $scanner->scanFile($file);
+
+  if (!$result['clean']) {
+    $sig = \Drupal\kelpgate\Scanner\KelpgateScanner::formatThreatSignature($result['signature']);
+    $errors[] = t('Security check failed: This file cannot be accepted (@signature).', [
+      '@signature' => $sig,
+    ]);
+  }
+
+  return $errors;
+}

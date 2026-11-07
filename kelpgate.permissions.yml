@@ -1,0 +1,4 @@
+administer kelpgate configuration:
+  title: 'Administer Kelpgate configuration'
+  description: 'Configure Kelpgate API endpoints, authentication tokens, and malware scanning rules.'
+  restrict access: true

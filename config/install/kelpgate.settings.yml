@@ -1,0 +1,10 @@
+enabled: true
+api_url: ''
+token_url: ''
+auth_mode: 'oauth2'
+client_id: ''
+client_secret: ''
+api_token: ''
+fail_action: 'block'
+max_scan_mb: 50
+timeout_seconds: 45

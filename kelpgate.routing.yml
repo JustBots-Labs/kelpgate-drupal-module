@@ -1,0 +1,7 @@
+kelpgate.settings:
+  path: '/admin/config/security/kelpgate'
+  defaults:
+    _form: '\Drupal\kelpgate\Form\SettingsForm'
+    _title: 'Kelpgate Malware Scanner Settings'
+  requirements:
+    _permission: 'administer kelpgate configuration'
