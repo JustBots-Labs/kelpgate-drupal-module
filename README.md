@@ -2,7 +2,22 @@
 
 Scans files uploaded to Drupal with the Kelpgate scanning API and rejects infected ones during file validation, before they are saved.
 
-Requires Drupal 9.4, 10 or 11, PHP 7.4+, and a Kelpgate account (client ID and secret from the Kelpgate Console).
+Requires Drupal 9.5, 10 or 11, PHP 7.4+, and a Kelpgate account (client ID and secret from the Kelpgate Console).
+
+## Compatibility
+
+Each combination was installed on a real Drupal site with the module enabled and checked: a clean file is accepted, an EICAR file is rejected, and both failure policies behave as set. The scanner API was simulated for these runs.
+
+| Drupal | PHP |
+| --- | --- |
+| 9.5 | 8.0, 8.1 |
+| 10.1 | 8.1 |
+| 10.3 | 8.2 |
+| 10.6 | 8.3 |
+| 11.3 | 8.3 |
+| 11.4 | 8.4 |
+
+All source files also lint cleanly on PHP 7.4 through 8.4. Combinations not listed have not been tested; Drupal 9.5 on PHP 7.4 could not be run because no image exists for it.
 
 ## Install
 
