@@ -94,7 +94,7 @@ $settings['kelpgate_client_secret'] = getenv('KELPGATE_CLIENT_SECRET');
 - **Secrets:** never stored in exported configuration; see [Secrets](#secrets).
 - **Rejection message:** visitors see a generic notice with a short detection name or error code (for example `Eicar-Test-Signature` or `HTTP_500`). Full details, including the SHA-256, go to the log.
 
-To report a vulnerability, please open a private security advisory on this repository.
+To report a vulnerability, please use this repository's private security advisory (Security, then Report a vulnerability) or email security@kelpgate.cloud.
 
 ## Compatibility
 
