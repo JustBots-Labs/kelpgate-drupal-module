@@ -1,20 +1,12 @@
-<div align="center">
-
 # Kelpgate Malware Scanner for Drupal
 
 **Reject infected files during validation, before Drupal saves them.**
-
-[![Drupal](https://img.shields.io/badge/Drupal-9.5%20%7C%2010%20%7C%2011-0678be)](#compatibility)
-[![PHP](https://img.shields.io/badge/PHP-7.4%20to%208.4-777bb4)](#compatibility)
-[![License](https://img.shields.io/badge/license-GPL--2.0--or--later-blue)](LICENSE)
-
-</div>
 
 Kelpgate Malware Scanner sends files uploaded to Drupal to the Kelpgate scanning service as part of file validation. Infected files are rejected with a validation error, and every detection is written to the Drupal log.
 
 ## Contents
 
-[Why Kelpgate](#why-kelpgate) · [How it works](#how-it-works) · [Install](#install) · [Configuration](#configuration) · [Secrets](#secrets) · [Failure policy](#failure-policy) · [Security and privacy](#security-and-privacy) · [Compatibility](#compatibility) · [Verify your setup](#verify-your-setup) · [Troubleshooting](#troubleshooting) · [License](#license)
+[Why Kelpgate](#why-kelpgate) · [How it works](#how-it-works) · [Install](#install) · [Configuration](#configuration) · [Secrets](#secrets) · [Failure policy](#failure-policy) · [Security and privacy](#security-and-privacy) · [Compatibility](#compatibility) · [Verify your setup](#verify-your-setup) · [Troubleshooting](#troubleshooting) · [Contributing and security](#contributing-and-security) · [License](#license)
 
 ## Why Kelpgate
 
@@ -135,6 +127,10 @@ The upload is rejected, and a message appears under **Reports > Recent log messa
 | Nothing is ever blocked | Scanning is disabled, the module is not configured, or `fail_action` is `allow` during an outage. |
 | Authentication errors after changing the secret | Clear the cache so the cached token is dropped, and confirm which of `settings.php` or state holds the secret. |
 | Log says the API URL must use https | The API or token URL is not HTTPS. |
+
+## Contributing and security
+
+Bug reports and pull requests are welcome; see the [contributing guide](https://github.com/JustBots-Labs/.github/blob/main/CONTRIBUTING.md). To report a vulnerability, follow the [security policy](https://github.com/JustBots-Labs/.github/blob/main/SECURITY.md) and report it privately. For help, see [getting help](https://github.com/JustBots-Labs/.github/blob/main/SUPPORT.md).
 
 ## License
 
