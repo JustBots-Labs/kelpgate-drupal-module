@@ -4,6 +4,8 @@
 
 Kelpgate Malware Scanner sends files uploaded to Drupal to the Kelpgate scanning service as part of file validation. Infected files are rejected with a validation error, and every detection is written to the Drupal log.
 
+> This module is open source under GPL-2.0-or-later. It is a client for the Kelpgate scanning service, a hosted commercial product that is not part of this repository. You need a Kelpgate account to use it.
+
 ## Contents
 
 [Why Kelpgate](#why-kelpgate) · [How it works](#how-it-works) · [Install](#install) · [Configuration](#configuration) · [Secrets](#secrets) · [Failure policy](#failure-policy) · [Security and privacy](#security-and-privacy) · [Compatibility](#compatibility) · [Verify your setup](#verify-your-setup) · [Troubleshooting](#troubleshooting) · [Contributing and security](#contributing-and-security) · [License](#license)
