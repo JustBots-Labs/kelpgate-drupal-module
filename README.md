@@ -41,11 +41,11 @@ The module obtains an OAuth 2.0 access token with your client credentials, cache
 **Requirements:** Drupal 9.5, 10 or 11, PHP 7.4 or later, and a Kelpgate account (client ID and client secret from the Kelpgate Console).
 
 ```bash
-git clone https://github.com/JustBots-Labs/kelpgate-drupal-module.git modules/contrib/kelpgate
+git clone https://github.com/KelpGate/kelpgate-drupal-module.git modules/contrib/kelpgate
 drush en kelpgate
 ```
 
-Or download the repository, place it in `modules/contrib/kelpgate` and enable it from **Extend**. The module is not on Packagist yet, so `composer require kelpgate/kelpgate` does not work; to install with Composer, first add this repository with `composer config repositories.kelpgate vcs https://github.com/JustBots-Labs/kelpgate-drupal-module`, then `composer require kelpgate/kelpgate:dev-main`. Then open `/admin/config/security/kelpgate` and enter the API URL, token URL, client ID and client secret. Access requires the `administer kelpgate` permission.
+Or download the repository, place it in `modules/contrib/kelpgate` and enable it from **Extend**. The module is not on Packagist yet, so `composer require kelpgate/kelpgate` does not work; to install with Composer, first add this repository with `composer config repositories.kelpgate vcs https://github.com/KelpGate/kelpgate-drupal-module`, then `composer require kelpgate/kelpgate:dev-main`. Then open `/admin/config/security/kelpgate` and enter the API URL, token URL, client ID and client secret. Access requires the `administer kelpgate` permission.
 
 ## Configuration
 
@@ -132,7 +132,7 @@ The upload is rejected, and a message appears under **Reports > Recent log messa
 
 ## Contributing and security
 
-Bug reports and pull requests are welcome; see the [contributing guide](https://github.com/JustBots-Labs/.github/blob/main/CONTRIBUTING.md). To report a vulnerability, follow the [security policy](https://github.com/JustBots-Labs/.github/blob/main/SECURITY.md) and report it privately. For help, see [getting help](https://github.com/JustBots-Labs/.github/blob/main/SUPPORT.md).
+Bug reports and pull requests are welcome; see the [contributing guide](https://github.com/KelpGate/.github/blob/main/CONTRIBUTING.md). To report a vulnerability, follow the [security policy](https://github.com/KelpGate/.github/blob/main/SECURITY.md) and report it privately. For help, see [getting help](https://github.com/KelpGate/.github/blob/main/SUPPORT.md).
 
 ## License
 
