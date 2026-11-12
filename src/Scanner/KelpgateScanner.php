@@ -74,6 +74,44 @@ class KelpgateScanner {
   }
 
   /**
+   * Environment variable that can force each setting, as in the Kelpgate client standard.
+   */
+  protected const ENVIRONMENT_VARIABLES = [
+    'api_url' => 'KELPGATE_API_URL',
+    'token_url' => 'KELPGATE_TOKEN_URL',
+    'auth_mode' => 'KELPGATE_AUTH_MODE',
+    'client_id' => 'KELPGATE_CLIENT_ID',
+    'client_secret' => 'KELPGATE_CLIENT_SECRET',
+    'api_token' => 'KELPGATE_TOKEN',
+    'fail_action' => 'KELPGATE_FAIL_ACTION',
+    'max_mb' => 'KELPGATE_MAX_MB',
+    'timeout_seconds' => 'KELPGATE_TIMEOUT_SECONDS',
+  ];
+
+  /**
+   * Returns the environment value that forces a setting, or an empty string when there is none.
+   */
+  protected function environmentValue(string $name): string {
+    $variable = self::ENVIRONMENT_VARIABLES[$name] ?? NULL;
+    if ($variable === NULL) {
+      return '';
+    }
+    $value = getenv($variable);
+    return $value === FALSE ? '' : trim($value);
+  }
+
+  /**
+   * Reads a setting: the environment wins over stored configuration.
+   *
+   * @return mixed
+   *   The setting value, as stored or as an environment string.
+   */
+  protected function setting(string $name) {
+    $fromEnvironment = $this->environmentValue($name);
+    return $fromEnvironment !== '' ? $fromEnvironment : $this->config->get($name);
+  }
+
+  /**
    * Resolves a credential without relying on exportable config.
    *
    * Order: settings.php ($settings['kelpgate_client_secret'] / ['kelpgate_api_token']), then the
@@ -81,6 +119,10 @@ class KelpgateScanner {
    * Config is exported by `drush config:export` and usually committed, so it is the last resort.
    */
   protected function secret(string $name): string {
+    $fromEnvironment = $this->environmentValue($name);
+    if ($fromEnvironment !== '') {
+      return $fromEnvironment;
+    }
     $fromSettings = Settings::get('kelpgate_' . $name);
     if (!empty($fromSettings)) {
       return trim((string) $fromSettings);
@@ -98,12 +140,12 @@ class KelpgateScanner {
    * Obtains an active Bearer token via OAuth2 or static config.
    */
   public function getAccessToken(): ?string {
-    $authMode = $this->config->get('auth_mode') ?: 'oauth2';
+    $authMode = $this->setting('auth_mode') ?: 'oauth2';
     if ($authMode === 'token') {
       return $this->secret('api_token') ?: null;
     }
 
-    $clientId = trim((string) $this->config->get('client_id'));
+    $clientId = trim((string) $this->setting('client_id'));
     $clientSecret = $this->secret('client_secret');
     if (empty($clientId) || empty($clientSecret)) {
       $this->logger->error('Kelpgate OAuth2 credentials missing.');
@@ -143,7 +185,7 @@ class KelpgateScanner {
     // A token that has not actually expired is still usable if a refresh is impossible or fails.
     $usable = ($token !== '' && ($expires === 0 || $expires > time())) ? $token : null;
 
-    $tokenUrl = rtrim((string) $this->config->get('token_url'), '/');
+    $tokenUrl = rtrim((string) $this->setting('token_url'), '/');
     if (empty($tokenUrl)) {
       $this->logger->error('Kelpgate OAuth2 token URL not configured.');
       return $usable;
@@ -204,7 +246,7 @@ class KelpgateScanner {
    * Drops the cached OAuth2 token (after a 401: revoked or rotated).
    */
   protected function forgetToken(): void {
-    $this->cache->delete('kelpgate_oauth_token_' . md5(trim((string) $this->config->get('client_id'))));
+    $this->cache->delete('kelpgate_oauth_token_' . md5(trim((string) $this->setting('client_id'))));
   }
 
   /**
@@ -239,7 +281,7 @@ class KelpgateScanner {
    * Checks the health of the Kelpgate API.
    */
   public function checkHealth(): array {
-    $apiUrl = rtrim((string) $this->config->get('api_url'), '/');
+    $apiUrl = rtrim((string) $this->setting('api_url'), '/');
     if (empty($apiUrl)) {
       return [
         'healthy' => false,
@@ -287,10 +329,10 @@ class KelpgateScanner {
       ];
     }
 
-    $failAction = $this->config->get('fail_action') ?: 'block';
+    $failAction = $this->setting('fail_action') ?: 'block';
 
     $fileSize = filesize($realPath);
-    $maxBytes = ((int) ($this->config->get('max_scan_mb') ?: 50)) * 1024 * 1024;
+    $maxBytes = ((int) ($this->setting('max_mb') ?: 50)) * 1024 * 1024;
     if ($fileSize > $maxBytes) {
       // Oversized files must not bypass the scanner: they follow the failure policy
       // (rejected by default, accepted only when the admin chose fail-open).
@@ -304,14 +346,14 @@ class KelpgateScanner {
       ];
     }
 
-    $apiUrl = rtrim((string) $this->config->get('api_url'), '/');
+    $apiUrl = rtrim((string) $this->setting('api_url'), '/');
     if (empty($apiUrl)) {
       return [
         'clean'     => ($failAction === 'allow'),
         'signature' => 'NOT_CONFIGURED',
       ];
     }
-    $timeout = (int) ($this->config->get('timeout_seconds') ?: 45);
+    $timeout = (int) ($this->setting('timeout_seconds') ?: 45);
     if (!self::isSecureUrl($apiUrl)) {
       $this->logger->error('Kelpgate API URL must use https; the file was not sent.');
       return [
@@ -335,7 +377,7 @@ class KelpgateScanner {
 
       // A revoked or rotated token would keep failing until the cached copy expires: drop it and
       // retry once with a fresh one.
-      if ($response->getStatusCode() === 401 && ($this->config->get('auth_mode') ?: 'oauth2') !== 'token') {
+      if ($response->getStatusCode() === 401 && ($this->setting('auth_mode') ?: 'oauth2') !== 'token') {
         $this->forgetToken();
         $fresh = $this->getAccessToken();
         if ($fresh) {

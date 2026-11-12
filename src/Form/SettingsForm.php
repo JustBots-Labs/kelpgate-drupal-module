@@ -114,10 +114,10 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('fail_action') ?: 'block',
     ];
 
-    $form['max_scan_mb'] = [
+    $form['max_mb'] = [
       '#type' => 'number',
       '#title' => $this->t('Maximum Scan Size (MB)'),
-      '#default_value' => $config->get('max_scan_mb') ?: 50,
+      '#default_value' => $config->get('max_mb') ?: 50,
       '#min' => 1,
       '#max' => 500,
       '#description' => $this->t('Files larger than this are not sent to the scanner. They are rejected when the failure action is "block" and accepted unscanned only when it is "allow".'),
@@ -146,7 +146,7 @@ class SettingsForm extends ConfigFormBase {
       ->set('token_url', rtrim($form_state->getValue('token_url'), '/'))
       ->set('client_id', trim($form_state->getValue('client_id')))
       ->set('fail_action', $form_state->getValue('fail_action'))
-      ->set('max_scan_mb', (int) $form_state->getValue('max_scan_mb'))
+      ->set('max_mb', (int) $form_state->getValue('max_mb'))
       ->set('timeout_seconds', (int) $form_state->getValue('timeout_seconds'));
 
     // The secret goes to the State API (database only), never into config: config is exported with

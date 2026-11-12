@@ -59,8 +59,10 @@ Settings live in `kelpgate.settings`:
 | `auth_mode` | `oauth2` | `oauth2`, or `token` for a static bearer token. |
 | `client_id` | none | OAuth 2.0 client ID. |
 | `fail_action` | `block` | `block` or `allow` when the scanner cannot give a verdict. |
-| `max_scan_mb` | `50` | Largest file that is scanned. |
+| `max_mb` | `50` | Largest file that is scanned. |
 | `timeout_seconds` | `45` | HTTP timeout for scanner requests. |
+
+Any setting can also be forced from the environment with the matching variable: `KELPGATE_API_URL`, `KELPGATE_TOKEN_URL`, `KELPGATE_AUTH_MODE`, `KELPGATE_CLIENT_ID`, `KELPGATE_CLIENT_SECRET`, `KELPGATE_TOKEN` (for `api_token`), `KELPGATE_FAIL_ACTION`, `KELPGATE_MAX_MB` and `KELPGATE_TIMEOUT_SECONDS`. An environment value wins over stored configuration.
 
 Pin values per environment in `settings.php`:
 
@@ -72,7 +74,7 @@ $config['kelpgate.settings']['client_id'] = getenv('KELPGATE_CLIENT_ID');
 
 ## Secrets
 
-The client secret is read in this order: `settings.php`, then Drupal state (what the settings form writes), then legacy configuration from older installs, which is migrated on the next save.
+The client secret is read in this order: the `KELPGATE_CLIENT_SECRET` environment variable, then `settings.php`, then Drupal state (what the settings form writes), then legacy configuration from older installs, which is migrated on the next save.
 
 ```php
 $settings['kelpgate_client_secret'] = getenv('KELPGATE_CLIENT_SECRET');
@@ -85,7 +87,7 @@ $settings['kelpgate_client_secret'] = getenv('KELPGATE_CLIENT_SECRET');
 | --- | --- | --- |
 | Scanner unreachable or returns an error | File rejected | File accepted |
 | Authentication fails | File rejected | File accepted |
-| File larger than `max_scan_mb` | File rejected | File accepted |
+| File larger than `max_mb` | File rejected | File accepted |
 
 ## Security and privacy
 
