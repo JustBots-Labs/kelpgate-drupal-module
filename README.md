@@ -16,7 +16,7 @@ Kelpgate Malware Scanner sends files uploaded to Drupal to the Kelpgate scanning
 | --- | --- |
 | **Native integration** | Implements `hook_file_validate()`, so file fields, Media Library and CKEditor image uploads are all covered without extra wiring. |
 | **Low memory use** | Files are streamed to the API instead of being loaded into memory. |
-| **Predictable failure behaviour** | Choose whether uploads are rejected or accepted when the scanner is unreachable or a file is too large. |
+| **Predictable failure behavior** | Choose whether uploads are rejected or accepted when the scanner is unreachable or a file is too large. |
 | **Secrets kept out of exported config** | The client secret lives in `settings.php` or Drupal state, never in `kelpgate.settings`. |
 | **Auditable** | Detections are logged to the `kelpgate` channel with the file's SHA-256. |
 
@@ -41,11 +41,11 @@ The module obtains an OAuth 2.0 access token with your client credentials, cache
 **Requirements:** Drupal 9.5, 10 or 11, PHP 7.4 or later, and a Kelpgate account (client ID and client secret from the Kelpgate Console).
 
 ```bash
-git clone https://github.com/KelpGate/kelpgate-drupal-module.git modules/contrib/kelpgate
+git clone https://github.com/KelpGate/kelpgate-drupal.git modules/contrib/kelpgate
 drush en kelpgate
 ```
 
-Or download the repository, place it in `modules/contrib/kelpgate` and enable it from **Extend**. The module is not on Packagist yet, so `composer require kelpgate/kelpgate` does not work; to install with Composer, first add this repository with `composer config repositories.kelpgate vcs https://github.com/KelpGate/kelpgate-drupal-module`, then `composer require kelpgate/kelpgate:dev-main`. Then open `/admin/config/security/kelpgate` and enter the API URL, token URL, client ID and client secret. Access requires the `administer kelpgate` permission.
+Or download the repository, place it in `modules/contrib/kelpgate` and enable it from **Extend**. The module is not on Packagist yet, so `composer require kelpgate/kelpgate-drupal` does not work; to install with Composer, first add this repository with `composer config repositories.kelpgate vcs https://github.com/KelpGate/kelpgate-drupal`, then `composer require kelpgate/kelpgate-drupal:dev-main`. Then open `/admin/config/security/kelpgate` and enter the API URL, token URL, client ID and client secret. Access requires the `administer kelpgate` permission.
 
 ## Configuration
 

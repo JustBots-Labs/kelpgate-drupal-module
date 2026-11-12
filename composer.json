@@ -1,9 +1,9 @@
 {
-  "name": "kelpgate/kelpgate",
+  "name": "kelpgate/kelpgate-drupal",
   "type": "drupal-module",
   "description": "Scans Drupal file uploads for malware with the Kelpgate API and rejects infected files.",
   "keywords": ["drupal", "security", "antivirus", "malware", "kelpgate"],
-  "homepage": "https://github.com/KelpGate/kelpgate-drupal-module",
+  "homepage": "https://github.com/KelpGate/kelpgate-drupal",
   "license": "GPL-2.0-or-later",
   "minimum-stability": "stable",
   "authors": [
@@ -14,8 +14,8 @@
   ],
   "support": {
     "email": "support@kelpgate.cloud",
-    "issues": "https://github.com/KelpGate/kelpgate-drupal-module/issues",
-    "source": "https://github.com/KelpGate/kelpgate-drupal-module"
+    "issues": "https://github.com/KelpGate/kelpgate-drupal/issues",
+    "source": "https://github.com/KelpGate/kelpgate-drupal"
   },
   "require": {
     "php": ">=7.4",
