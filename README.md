@@ -8,7 +8,7 @@ Kelpgate Malware Scanner sends files uploaded to Drupal to the Kelpgate scanning
 
 ## Contents
 
-[Why Kelpgate](#why-kelpgate) · [How it works](#how-it-works) · [Install](#install) · [Configuration](#configuration) · [Secrets](#secrets) · [Failure policy](#failure-policy) · [Security and privacy](#security-and-privacy) · [Compatibility](#compatibility) · [Verify your setup](#verify-your-setup) · [Troubleshooting](#troubleshooting) · [Contributing and security](#contributing-and-security) · [License](#license)
+[Why Kelpgate](#why-kelpgate) · [How it works](#how-it-works) · [Install](#install) · [Configuration](#configuration) · [Secrets](#secrets) · [Failure policy](#failure-policy) · [Security and privacy](#security-and-privacy) · [Compatibility](#compatibility) · [Verify your setup](#verify-your-setup) · [Troubleshooting](#troubleshooting) · [Support and versioning](#support-and-versioning) · [Contributing and security](#contributing-and-security) · [License](#license)
 
 ## Why Kelpgate
 
@@ -129,6 +129,14 @@ The upload is rejected, and a message appears under **Reports > Recent log messa
 | Nothing is ever blocked | Scanning is disabled, the module is not configured, or `fail_action` is `allow` during an outage. |
 | Authentication errors after changing the secret | Clear the cache so the cached token is dropped, and confirm which of `settings.php` or state holds the secret. |
 | Log says the API URL must use https | The API or token URL is not HTTPS. |
+
+## Support and versioning
+
+This project follows [Semantic Versioning](https://semver.org): breaking changes only in major versions, new features in minor versions, fixes in patch versions. Releases are tagged on GitHub, and user-visible changes are listed in the [changelog](CHANGELOG.md).
+
+Fixes, including security fixes, go into the latest release only, so upgrade to receive them. The tested runtime versions are listed under Compatibility. The module talks to version 1 of the Kelpgate API (`/api/v1`).
+
+For help, see [getting help](https://github.com/KelpGate/.github/blob/main/SUPPORT.md) or email support@kelpgate.cloud.
 
 ## Contributing and security
 
