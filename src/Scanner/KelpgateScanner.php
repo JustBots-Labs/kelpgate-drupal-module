@@ -250,17 +250,30 @@ class KelpgateScanner {
   }
 
   /**
+   * The Idempotency-Key for one scan. The service counts a request repeated under the same key
+   * only once, so one key is made per scan and reused by the retry after a refreshed token: the
+   * repeat is never counted against the plan's quota twice.
+   */
+  protected function newIdempotencyKey(): string {
+    return \Drupal::service('uuid')->generate();
+  }
+
+  /**
    * POSTs the file. http_errors is off on purpose: Kelpgate answers INFECTED with HTTP 406, and
    * Guzzle would otherwise throw before the verdict in the body can be read.
    */
-  protected function postFile(string $url, string $token, string $realPath, string $filename, int $timeout) {
+  protected function postFile(string $url, string $token, string $realPath, string $filename, int $timeout, string $idempotencyKey = '') {
+    $headers = ['Authorization' => 'Bearer ' . $token];
+    if ($idempotencyKey !== '') {
+      $headers['Idempotency-Key'] = $idempotencyKey;
+    }
     $handle = fopen($realPath, 'r');
     if ($handle === FALSE) {
       throw new \RuntimeException('Cannot open the file for scanning.');
     }
     try {
       return $this->httpClient->request('POST', $url, [
-        'headers' => ['Authorization' => 'Bearer ' . $token],
+        'headers' => $headers,
         'timeout' => $timeout,
         'http_errors' => FALSE,
         'multipart' => [[
@@ -371,9 +384,10 @@ class KelpgateScanner {
     }
 
     $endpoint = '/api/v1/scan/file';
+    $idempotencyKey = $this->newIdempotencyKey();
 
     try {
-      $response = $this->postFile($apiUrl . $endpoint, $token, $realPath, $file->getFilename(), $timeout);
+      $response = $this->postFile($apiUrl . $endpoint, $token, $realPath, $file->getFilename(), $timeout, $idempotencyKey);
 
       // A revoked or rotated token would keep failing until the cached copy expires: drop it and
       // retry once with a fresh one.
@@ -381,7 +395,7 @@ class KelpgateScanner {
         $this->forgetToken();
         $fresh = $this->getAccessToken();
         if ($fresh) {
-          $response = $this->postFile($apiUrl . $endpoint, $fresh, $realPath, $file->getFilename(), $timeout);
+          $response = $this->postFile($apiUrl . $endpoint, $fresh, $realPath, $file->getFilename(), $timeout, $idempotencyKey);
         }
       }
 
