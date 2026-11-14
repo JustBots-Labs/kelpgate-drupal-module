@@ -69,7 +69,7 @@ class SettingsForm extends ConfigFormBase {
       '#default_value' => $config->get('api_url') ?: '',
       '#attributes' => ['placeholder' => 'https://api.your-kelpgate-domain.com'],
       '#description' => $this->t('The base URL of your Kelpgate REST API instance.'),
-      '#required' => true,
+      '#required' => TRUE,
     ];
 
     $form['auth_mode'] = [

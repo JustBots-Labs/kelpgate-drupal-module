@@ -142,18 +142,18 @@ class KelpgateScanner {
   public function getAccessToken(): ?string {
     $authMode = $this->setting('auth_mode') ?: 'oauth2';
     if ($authMode === 'token') {
-      return $this->secret('api_token') ?: null;
+      return $this->secret('api_token') ?: NULL;
     }
 
     $clientId = trim((string) $this->setting('client_id'));
     $clientSecret = $this->secret('client_secret');
     if (empty($clientId) || empty($clientSecret)) {
       $this->logger->error('Kelpgate OAuth2 credentials missing.');
-      return null;
+      return NULL;
     }
 
-    $cid  = 'kelpgate_oauth_token_' . md5($clientId);
-    $lock = 'kelpgate_oauth_lock_' . md5($clientId);
+    $cid  = 'kelpgate_oauth_token_' . hash('sha256', $clientId);
+    $lock = 'kelpgate_oauth_lock_' . hash('sha256', $clientId);
 
     // The cache holds the token plus its real expiry time. Older versions cached the bare token
     // string (treated as "valid, expiry unknown": used as before and replaced when it expires).
@@ -183,7 +183,7 @@ class KelpgateScanner {
       }
     }
     // A token that has not actually expired is still usable if a refresh is impossible or fails.
-    $usable = ($token !== '' && ($expires === 0 || $expires > time())) ? $token : null;
+    $usable = ($token !== '' && ($expires === 0 || $expires > time())) ? $token : NULL;
 
     $tokenUrl = rtrim((string) $this->setting('token_url'), '/');
     if (empty($tokenUrl)) {
@@ -192,7 +192,7 @@ class KelpgateScanner {
     }
     if (!self::isSecureUrl($tokenUrl)) {
       $this->logger->error('Kelpgate OAuth2 token URL must use https; refusing to send credentials.');
-      return null;
+      return NULL;
     }
 
     $this->cache->set($lock, 1, time() + 15);
@@ -206,7 +206,7 @@ class KelpgateScanner {
         'timeout' => 15,
       ]);
 
-      $data = json_decode((string) $response->getBody(), true);
+      $data = json_decode((string) $response->getBody(), TRUE);
       if (!empty($data['access_token'])) {
         $fresh = $data['access_token'];
         $expiresIn = (int) ($data['expires_in'] ?? 900);
@@ -227,6 +227,8 @@ class KelpgateScanner {
   }
 
   /**
+   * Tells whether an endpoint URL is acceptable for sending credentials and files.
+   *
    * Credentials and file contents travel to these endpoints, so they must use TLS. Plain http is
    * accepted only for loopback (local development).
    */
@@ -246,21 +248,25 @@ class KelpgateScanner {
    * Drops the cached OAuth2 token (after a 401: revoked or rotated).
    */
   protected function forgetToken(): void {
-    $this->cache->delete('kelpgate_oauth_token_' . md5(trim((string) $this->setting('client_id'))));
+    $this->cache->delete('kelpgate_oauth_token_' . hash('sha256', trim((string) $this->setting('client_id'))));
   }
 
   /**
-   * The Idempotency-Key for one scan. The service counts a request repeated under the same key
-   * only once, so one key is made per scan and reused by the retry after a refreshed token: the
-   * repeat is never counted against the plan's quota twice.
+   * Makes the Idempotency-Key for one scan.
+   *
+   * The service counts a request repeated under the same key only once, so one key is made per
+   * scan and reused by the retry after a refreshed token: the repeat is never counted against the
+   * plan's quota twice.
    */
   protected function newIdempotencyKey(): string {
     return \Drupal::service('uuid')->generate();
   }
 
   /**
-   * POSTs the file. http_errors is off on purpose: Kelpgate answers INFECTED with HTTP 406, and
-   * Guzzle would otherwise throw before the verdict in the body can be read.
+   * POSTs the file to the scanning endpoint.
+   *
+   * Http_errors is off on purpose: Kelpgate answers INFECTED with HTTP 406, and Guzzle would
+   * otherwise throw before the verdict in the body can be read.
    */
   protected function postFile(string $url, string $token, string $realPath, string $filename, int $timeout, string $idempotencyKey = '') {
     $headers = ['Authorization' => 'Bearer ' . $token];
@@ -280,7 +286,8 @@ class KelpgateScanner {
           'name'     => 'file',
           'contents' => $handle,
           'filename' => $filename,
-        ]],
+        ],
+        ],
       ]);
     }
     finally {
@@ -297,7 +304,7 @@ class KelpgateScanner {
     $apiUrl = rtrim((string) $this->setting('api_url'), '/');
     if (empty($apiUrl)) {
       return [
-        'healthy' => false,
+        'healthy' => FALSE,
         'code'    => 0,
         'error'   => 'Scanner API endpoint is not configured.',
       ];
@@ -320,7 +327,7 @@ class KelpgateScanner {
     }
     catch (\Exception $e) {
       return [
-        'healthy' => false,
+        'healthy' => FALSE,
         'code'    => 0,
         'error'   => $e->getMessage(),
       ];
@@ -337,7 +344,7 @@ class KelpgateScanner {
     if (!$realPath || !file_exists($realPath) || !is_readable($realPath)) {
       $this->logger->warning('Cannot read local file for Kelpgate scanning: @path', ['@path' => $uri]);
       return [
-        'clean'     => false,
+        'clean'     => FALSE,
         'signature' => 'FILE_UNREADABLE',
       ];
     }
@@ -400,7 +407,7 @@ class KelpgateScanner {
       }
 
       $statusCode = $response->getStatusCode();
-      $body = json_decode((string) $response->getBody(), true);
+      $body = json_decode((string) $response->getBody(), TRUE);
 
       if ($statusCode === 200 && is_array($body) && isset($body['av-status']) && $body['av-status'] === 'CLEAN') {
         $this->logger->info('Kelpgate scan CLEAN for file @filename (SHA256: @sha)', [
@@ -408,7 +415,7 @@ class KelpgateScanner {
           '@sha'      => $body['sha256'] ?? 'n/a',
         ]);
         return [
-          'clean'     => true,
+          'clean'     => TRUE,
           'signature' => 'CLEAN',
           'sha256'    => $body['sha256'] ?? '',
         ];
@@ -422,7 +429,7 @@ class KelpgateScanner {
           '@sha'      => $body['sha256'] ?? 'n/a',
         ]);
         return [
-          'clean'     => false,
+          'clean'     => FALSE,
           'signature' => $sig,
           'sha256'    => $body['sha256'] ?? '',
         ];
@@ -459,7 +466,7 @@ class KelpgateScanner {
       return 'Threat Detected';
     }
 
-    if (stripos($raw, 'eicar') !== false) {
+    if (stripos($raw, 'eicar') !== FALSE) {
       return 'EICAR-Standard-AV-Test-Signature';
     }
 
@@ -473,7 +480,7 @@ class KelpgateScanner {
     foreach ($parts as $p) {
       $sub = array_map('trim', explode(',', $p));
       foreach ($sub as $s) {
-        if (!empty($s) && !in_array($s, $unique, true)) {
+        if (!empty($s) && !in_array($s, $unique, TRUE)) {
           $unique[] = $s;
         }
       }

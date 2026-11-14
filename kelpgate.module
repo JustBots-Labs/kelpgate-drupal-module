@@ -5,6 +5,7 @@
  * Primary module hooks for the Kelpgate Malware Scanner module.
  */
 
+use Drupal\kelpgate\Scanner\KelpgateScanner;
 use Drupal\file\FileInterface;
 
 /**
@@ -25,7 +26,7 @@ function kelpgate_file_validate(FileInterface $file) {
   $result = $scanner->scanFile($file);
 
   if (!$result['clean']) {
-    $sig = \Drupal\kelpgate\Scanner\KelpgateScanner::formatThreatSignature($result['signature']);
+    $sig = KelpgateScanner::formatThreatSignature($result['signature']);
     $errors[] = t('Security check failed: This file cannot be accepted (@signature).', [
       '@signature' => $sig,
     ]);
